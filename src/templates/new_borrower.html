@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Check-Out</title>
+    <link rel="stylesheet" type="text/css" href="index.css">
+</head>
+<body>
+    <h1>Add a new borrower</h1>
+    <form id="borrowerForm" action="" method="post">
+        <input type="text" name="firstName" placeholder="First Name">
+        <input type="text" name="lastName" placeholder="Last Name">
+        <input type="text" name="ssn" placeholder="Ssn">
+        <input type="text" name="address" placeholder="Address">
+        <input type="submit" value="Add Borrower">
+    </form>
+    <script>
+        document.getElementById('borrowerForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var formData = {
+                firstName: this.querySelector('[name="firstName"]').value,
+                lastName: this.querySelector('[name="lastName"]').value,
+                ssn: this.querySelector('[name="ssn"]').value,
+                address: this.querySelector('[name="address"]').value
+            };
+            console.log('Borrower Details:', formData);
+        });
+    </script>
+</body>
+</html>

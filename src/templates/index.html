@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Search Page</title>
+    <link rel="stylesheet" type="text/css" href="index.css">
+</head>
+<body>
+    <h1>Library System</h1>
+    <form id="searchForm" action="/search" method="get"> 
+        <input type="text" name="query" placeholder="Search For Books...">
+        <input type="submit" value="Search">
+    </form>
+    <a href="checkout.html"><button>Check-Out</button></a>
+    <a href="checkin.html"><button>Check-In</button></a>
+    <a href="admin.html"><button>Admin</button></a>
+    <a href="viewfines.html"><button>View Fines</button></a>
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var searchText = this.querySelector('[name="query"]').value;
+            console.log('Search Query:', searchText);
+        });
+    </script>
+</body>
+</html>
