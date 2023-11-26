@@ -5,6 +5,7 @@ from models.Models import Book, Borrower, BookLoan
 app = Flask(__name__)
 
 db_action_instance = db_actions('data/books (1).csv', 'data/borrowers (2).csv')
+id = 1001
 
 
 @app.route('/')
@@ -27,8 +28,9 @@ def viewfines():
     return render_template('viewfines.html')
 
 
-@app.route('/new_borrower', methods=['POST'])
+@app.route('/new_borrower', methods=['GET', 'POST'])
 def add_borrower():
+    global id
 
     if request.method == 'POST':
         first_name = request.form['firstName']
@@ -43,6 +45,7 @@ def add_borrower():
         print(first_name, last_name, ssn, email, address, city, state, phone)
 
         new_borrower = Borrower(
+            ID0000id=(f'ID0000{id}'),
             first_name=first_name,
             last_name=last_name,
             ssn=ssn,
@@ -56,9 +59,11 @@ def add_borrower():
         db_action_instance.session.add(new_borrower)
         db_action_instance.session.commit()
 
-        return redirect(url_for('success_page'))
+        id += 1
+
+        # return redirect(url_for('success_page'))
     else:
-        return render_template('index.html')
+        return render_template('new_borrower.html')
 
 
 @app.route('/success')
