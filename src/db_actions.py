@@ -2,8 +2,6 @@ from models.models import Book, Borrower, BookLoan
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from sqlalchemy import or_
-from sqlalchemy import and_
-from datetime import datetime, timedelta
 from sqlalchemy import cast, String
 from sqlalchemy.exc import SQLAlchemyError
 # from sqlalchemy import URL
@@ -62,6 +60,14 @@ class db_actions:
         results = self.session.query(Borrower).all()
 
         return results
+
+    def add_loans(self) -> bool:
+        try:
+            BookLoan.metadata.create_all(self.engine)
+            return True
+        except SQLAlchemyError as e:
+            print(f"An error occurred while creating 'book_loans' table: {e}")
+            return False
 
     def search_books(self, search_query):
         search_query = '%' + search_query.lower() + '%'  # for substring matching
