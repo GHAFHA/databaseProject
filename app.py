@@ -1,8 +1,7 @@
-from flask import Flask, render_template, request, redirect, url_for
+from src.db_actions import db_actions
 from flask import request
-from db_actions import db_actions
-from models.models import Borrower
-
+from flask import Flask, render_template, request, redirect, url_for
+from models.Models import Book, Borrower, BookLoan
 app = Flask(__name__)
 
 db_action_instance = db_actions('data/books (1).csv', 'data/borrowers (2).csv')
@@ -13,7 +12,7 @@ def home():
     return render_template('index.html')
 
 
-@app.route('/new_borrower', methods=['GET', 'POST'])
+@app.route('/new_borrower', methods=['POST'])
 def add_borrower():
 
     if request.method == 'POST':

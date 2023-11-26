@@ -1,4 +1,4 @@
-from models.models import Book, Borrower, BookLoan
+from models.Models import Book, Borrower, BookLoan
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from sqlalchemy import or_

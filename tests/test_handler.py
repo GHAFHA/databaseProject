@@ -1,6 +1,6 @@
 import pytest
 from sqlalchemy import inspect
-from models.models import Book, Borrower
+from models.Models import Book, Borrower
 
 
 def test_add_borrowers(add_schema_instance):

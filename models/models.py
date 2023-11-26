@@ -1,7 +1,6 @@
-from sqlalchemy import Column, Integer, String, Date, ForeignKey, Sequence
+from sqlalchemy import Column, Integer, String, Date, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-from sqlalchemy import Boolean
 
 Base = declarative_base()
 
@@ -21,10 +20,7 @@ class Book(Base):
 class Borrower(Base):
     __tablename__ = 'borrowers'
 
-    id_sequence = Sequence('borrower_id_seq', metadata=Base.metadata)
-
-    ID0000id = Column(String, primary_key=True,
-                      default=lambda: f"ID{Borrower.id_sequence.next_value():04d}")
+    ID0000id = Column(String, primary_key=True)
     ssn = Column(String)
     first_name = Column(String)
     last_name = Column(String)
