@@ -12,6 +12,21 @@ def home():
     return render_template('index.html')
 
 
+@app.route('/checkout')
+def checkout():
+    return render_template('checkout.html')
+
+
+@app.route('/admin')
+def admin():
+    return render_template('admin.html')
+
+
+@app.route('/viewfines')
+def viewfines():
+    return render_template('viewfines.html')
+
+
 @app.route('/new_borrower', methods=['POST'])
 def add_borrower():
 

@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Simple Search Page</title>
-    <link rel="stylesheet" type="text/css" href="index.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index.css') }}"">
 </head>
 <body>
     <h1>Library System</h1>
@@ -10,10 +10,10 @@
         <input type="text" name="query" placeholder="Search For Books...">
         <input type="submit" value="Search">
     </form>
-    <a href="checkout.html"><button>Check-Out</button></a>
-    <a href="checkin.html"><button>Check-In</button></a>
-    <a href="admin.html"><button>Admin</button></a>
-    <a href="viewfines.html"><button>View Fines</button></a>
+    <a href="/checkout"><button>Check-Out</button></a>
+    <a href="/checkin"><button>Check-In</button></a>
+    <a href="/admin"><button>Admin</button></a>
+    <a href="/viewfines"><button>View Fines</button></a>
     <script>
         document.getElementById('searchForm').addEventListener('submit', function(event) {
             event.preventDefault();
