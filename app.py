@@ -61,9 +61,34 @@ def add_borrower():
 
         id += 1
 
-        return redirect(url_for('index.html'))
+        return redirect(url_for('/'))
     else:
         return render_template('new_borrower.html')
+
+
+@app.route('/checkout', methods=['GET', 'POST'])
+def check_out_book():
+    if request.method == 'POST':
+        borrower_id = request.form['card_number']
+        ISBN10 = request.form['ISBN10']
+        date_out = request.form['date_out']
+        due_date = request.form['due_date']
+        date_in = request.form['date_in']
+
+        new_book_loan = BookLoan(
+            borrower_id=borrower_id,
+            ISBN10=ISBN10,
+            date_out=date_out,
+            due_date=due_date,
+            date_in=date_in
+        )
+
+        db_action_instance.session.add(new_book_loan)
+        db_action_instance.session.commit()
+
+        return redirect(url_for('/'))
+    else:
+        return render_template('checkout.html')
 
 
 @app.route('/success')

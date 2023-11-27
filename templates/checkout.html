@@ -6,10 +6,12 @@
 </head>
 <body>
     <h1>Check-Out Page</h1>
-    <form>
+    <form id="bookCheckOut" action="/checkout" method="get">
         <input type="text" name="book_name" placeholder="Enter book name...">
         <input type="text" name="card_number" placeholder="Enter card number...">
-        <input type="submit" value ="Check-Out">
+        <input type="text" name="check_out_date" placeholder="Enter check out date...">
+        <input type="text" name="check_in_date" placeholder="Enter check in date..">
+        <input type="submit" value="Check Out">
     </form>
 </body>
 </html>
