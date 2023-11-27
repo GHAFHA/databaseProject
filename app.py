@@ -61,7 +61,7 @@ def add_borrower():
 
         id += 1
 
-        # return redirect(url_for('success_page'))
+        return redirect(url_for('index.html'))
     else:
         return render_template('new_borrower.html')
 

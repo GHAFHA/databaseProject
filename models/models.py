@@ -1,6 +1,5 @@
-from sqlalchemy import Column, Integer, String, Date, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, Date, ForeignKey, UniqueConstraint
+from sqlalchemy.orm import relationship, declarative_base
 
 Base = declarative_base()
 
@@ -15,6 +14,13 @@ class Book(Base):
     Cover = Column(String)
     Publisher = Column(String)
     Pages = Column(Integer)
+
+    # Define a unique constraint for ISBN10
+    __table_args__ = (
+        UniqueConstraint('ISBN10', name='uq_ISBN10'),
+    )
+
+    loans = relationship('BookLoan', back_populates='book')
 
 
 class Borrower(Base):
@@ -35,11 +41,10 @@ class BookLoan(Base):
     __tablename__ = 'book_loans'
 
     loan_id = Column(Integer, primary_key=True)
-    isbn = Column(String, ForeignKey('books.ISBN10'))
-    card_no = Column(String, ForeignKey('borrowers.ID0000id'))
+    ISBN10 = Column(String, ForeignKey('books.ISBN10'))
+    ID0000id = Column(String, ForeignKey('borrowers.ID0000id'))
     date_out = Column(Date)
     due_date = Column(Date)
     date_in = Column(Date)
 
-    book = relationship('Book', backref='loans')
-    borrower = relationship('Borrower', backref='loans')
+    book = relationship('Book', back_populates='loans')

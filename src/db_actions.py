@@ -35,7 +35,15 @@ class db_actions:
         df_two = pd.read_csv(self.filepath_two)
         return df_one, df_two
 
-    def add_avail(self) -> bool:
+    def create_tables(self):
+        try:
+            BookLoan.metadata.create_all(self.engine)
+            return True
+        except SQLAlchemyError as e:
+            print(f"An error occurred while creating tables: {e}")
+            return False
+
+    def add_book_avail(self) -> bool:
         try:
             with self.engine.begin() as connection:
                 connection.execute(
@@ -109,6 +117,7 @@ def main():
     schema_adder = db_actions('data/books (1).csv', 'data/borrowers (2).csv')
     schema_adder.add_books()
     schema_adder.add_borrowers()
+    schema_adder.create_tables()
 
 
 if __name__ == '__main__':
