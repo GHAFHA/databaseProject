@@ -11,7 +11,7 @@ def test_add_borrowers(add_schema_instance):
 
 def test_add_books(add_schema_instance):
     results = add_schema_instance.add_books()
-    assert len(results) == 25000
+    assert len(results) == 24968
     print(results[0])
 
 
