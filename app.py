@@ -7,6 +7,10 @@ app = Flask(__name__)
 db_action_instance = db_actions('data/books (1).csv', 'data/borrowers (2).csv')
 id = 1001
 
+db_action_instance.add_books()
+db_action_instance.add_borrowers()
+db_action_instance.create_tables()
+
 
 @app.route('/')
 def home():

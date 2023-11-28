@@ -3,6 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from sqlalchemy import or_
 from sqlalchemy import cast, String
+from sqlalchemy import inspect
 from sqlalchemy.exc import SQLAlchemyError
 # from sqlalchemy import URL
 # import psycopg2
@@ -26,14 +27,8 @@ class db_actions:
         self.engine = create_engine(
             'postgresql://noeljohnson:''@localhost:5432/postgres', echo=True
         )
-
         Session = sessionmaker(bind=self.engine)
         self.session = Session()
-
-    def parse_csv(self):
-        df_one = pd.read_csv(self.filepath_one)
-        df_two = pd.read_csv(self.filepath_two)
-        return df_one, df_two
 
     def create_tables(self):
         try:
@@ -43,31 +38,25 @@ class db_actions:
             print(f"An error occurred while creating tables: {e}")
             return False
 
+    # this method got a little weird
     def add_book_avail(self) -> bool:
         try:
-            with self.engine.begin() as connection:
-                connection.execute(
-                    'ALTER TABLE books ADD COLUMN IF NOT EXISTS availability BOOLEAN DEFAULT TRUE;')
+            with self.engine.connect() as connection:
+                # Check if the column exists
+                inspector = inspect(connection)
+                columns = [col['name']
+                           for col in inspector.get_columns('books')]
+                if 'book_availability' in columns:
+                    # drop the column if it exists
+                    connection.execute(
+                        'ALTER TABLE books DROP COLUMN book_availability;'
+                    )
+                else:
+                    print('Column "book_availability" does not exist.')
             return True
         except SQLAlchemyError as e:
             print(f"An error occurred: {e}")
             return False
-
-    def add_books(self) -> List:
-        data = pd.read_csv(self.filepath_one, delimiter='\t', encoding='utf-8')
-        data.to_sql('books', con=self.engine,
-                    if_exists='replace', index=False)
-        results = self.session.query(Book).all()
-
-        return results
-
-    def add_borrowers(self) -> List:
-        data = pd.read_csv(self.filepath_two)
-        data.to_sql('borrowers', con=self.engine,
-                    if_exists='replace', index=False)
-        results = self.session.query(Borrower).all()
-
-        return results
 
     def add_loans(self) -> bool:
         try:
@@ -77,40 +66,8 @@ class db_actions:
             print(f"An error occurred while creating 'book_loans' table: {e}")
             return False
 
-    def search_books(self, search_query):
-        search_query = '%' + search_query.lower() + '%'  # for substring matching
-
-        results = self.session.query(Book).filter(
-            or_(
-                cast(Book.ISBN10, String).ilike(search_query),
-                cast(Book.ISBN13, String).ilike(search_query),
-                Book.Title.ilike(search_query),
-                Book.Authro.ilike(search_query),
-            )
-        ).all()
-
-        search_results = []
-        for book in results:
-            availability = 'Available' if book.availability else 'Checked out'
-            search_results.append({
-                'ISBN': book.ISBN10,
-                'Title': book.Title,
-                'Author': book.Authro,
-                'Availability': availability
-            })
-
-        return search_results
-
     def checkout_books(self, isbn_list, card_no):
         pass
-
-    # def add_schema(self, table_name: str, filepath: str, schema) -> None:
-    #     data = pd.read_csv(filepath)
-    #     data.to_sql(table_name, con=self.engine,
-    #                 if_exists='replace', index=False)
-    #     results = self.session.query(schema).all()
-
-    #     self.query_table(schema, results)
 
 
 def main():
