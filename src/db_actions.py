@@ -1,23 +1,12 @@
-from models.Models import Book, Borrower, BookLoan
+from models.Models import Book, Borrower, BookLoan, Base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from sqlalchemy import or_
 from sqlalchemy import cast, String
 from sqlalchemy import inspect
 from sqlalchemy.exc import SQLAlchemyError
-# from sqlalchemy import URL
-# import psycopg2
 import pandas as pd
 from typing import List
-
-
-# url_object = URL.create(
-#     "postgresql",
-#     "noeljohnson",
-#     "",
-#     "localhost:5432",
-#     "test_server"
-# )
 
 
 class db_actions:
@@ -32,7 +21,17 @@ class db_actions:
 
     def create_tables(self):
         try:
-            BookLoan.metadata.create_all(self.engine)
+            data = pd.read_csv(self.filepath_one,
+                               delimiter='\t', encoding='utf-8')
+            data.to_sql('books', con=self.engine,
+                        if_exists='append', index=False)
+
+            data = pd.read_csv(self.filepath_two)
+            data.to_sql('borrowers', con=self.engine,
+                        if_exists='append', index=False)
+
+            Base.metadata.create_all(self.engine)
+
             return True
         except SQLAlchemyError as e:
             print(f"An error occurred while creating tables: {e}")
@@ -66,14 +65,23 @@ class db_actions:
             print(f"An error occurred while creating 'book_loans' table: {e}")
             return False
 
-    def checkout_books(self, isbn_list, card_no):
-        pass
+    def search_books(self, search_query) -> List:
+        try:
+            results = self.session.query(Book).filter(
+                or_(
+                    Book.Title.ilike(f'%{search_query}%'),
+                    Book.Author.ilike(f'%{search_query}%'),
+                    # Add other fields if needed
+                )
+            ).all()
+            return results
+        except SQLAlchemyError as e:
+            print(f"An error occurred: {e}")
+            return []
 
 
 def main():
     schema_adder = db_actions('data/books (1).csv', 'data/borrowers (2).csv')
-    schema_adder.add_books()
-    schema_adder.add_borrowers()
     schema_adder.create_tables()
 
 

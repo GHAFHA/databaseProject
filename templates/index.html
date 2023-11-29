@@ -16,7 +16,7 @@
     <a href="/viewfines"><button>View Fines</button></a>
     <script>
         document.getElementById('searchForm').addEventListener('submit', function(event) {
-            event.preventDefault();
+            // event.preventDefault();
             var searchText = this.querySelector('[name="query"]').value;
             console.log('Search Query:', searchText);
         });

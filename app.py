@@ -2,14 +2,11 @@ from src.db_actions import db_actions
 from flask import request
 from flask import Flask, render_template, request, redirect, url_for
 from models.Models import Book, Borrower, BookLoan
+from sqlalchemy.exc import SQLAlchemyError
 app = Flask(__name__)
 
 db_action_instance = db_actions('data/books (1).csv', 'data/borrowers (2).csv')
 id = 1001
-
-db_action_instance.add_books()
-db_action_instance.add_borrowers()
-db_action_instance.create_tables()
 
 
 @app.route('/')
@@ -30,6 +27,18 @@ def admin():
 @app.route('/viewfines')
 def viewfines():
     return render_template('viewfines.html')
+
+
+@app.route('/search', methods=['GET'])
+def search():
+    search_query = request.args.get('query')
+    if search_query:
+        # Query the database for books that match the search query
+        search_results = db_action_instance.search_books(search_query)
+        return render_template('search_results.html', books=search_results)
+    else:
+        # No query was entered, redirect to home
+        return redirect(url_for('home'))
 
 
 @app.route('/new_borrower', methods=['GET', 'POST'])
@@ -65,7 +74,7 @@ def add_borrower():
 
         id += 1
 
-        return redirect(url_for('/'))
+        return redirect(url_for('home'))
     else:
         return render_template('new_borrower.html')
 
@@ -87,12 +96,15 @@ def check_out_book():
             date_in=date_in
         )
 
-        db_action_instance.session.add(new_book_loan)
-        db_action_instance.session.commit()
+        try:
+            db_action_instance.session.add(new_book_loan)
+            db_action_instance.session.commit()
+            return redirect(url_for('success_page'))
+        except SQLAlchemyError as e:
+            print(f"An error occurred: {e}")
+            return redirect(url_for('checkout'))
 
-        return redirect(url_for('/'))
-    else:
-        return render_template('checkout.html')
+    return render_template('checkout.html')
 
 
 @app.route('/success')

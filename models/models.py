@@ -40,8 +40,7 @@ class BookLoan(Base):
     __tablename__ = 'book_loans'
 
     loan_id = Column(Integer, primary_key=True)
-    ISBN10 = Column(String, ForeignKey(
-        'books.ISBN10', onupdate="CASCADE", ondelete="CASCADE"))
+    ISBN10 = Column(String, ForeignKey('books.ISBN10'))
     borrower_id = Column(String, ForeignKey(
         'borrowers.ID0000id'), nullable=False)
     date_out = Column(Date, nullable=False)
